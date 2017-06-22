@@ -40,7 +40,7 @@
 //- (IBAction)onColorModeSelected:
 //(UISegmentedControl *)segmentedControl;
 //- (IBAction)onSwitchCameraButtonPressed;
-//- (IBAction)onSaveButtonPressed;
+- (IBAction)onSaveButtonPressed;
 
 //- (void)refresh;
 //- (void)processImage:(cv::Mat &)mat;
@@ -69,6 +69,11 @@
 //    self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetHigh;
 //    self.videoCamera.defaultFPS = 30;
 //    self.videoCamera.letterboxPreview = YES;
+}
+
+// TODO
+-(IBAction)onSaveButtonPressed {
+    NSLog(@"Save button pressed");
 }
 
 //- (void)viewDidLayoutSubviews {
