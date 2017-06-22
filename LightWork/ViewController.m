@@ -93,7 +93,28 @@
 }
 
 -(IBAction)onSwitchCameraButtonPressed {
-    NSLog(@"Switch camera button pressed");
+    if (self.videoCamera.running) {
+        switch (self.videoCamera.defaultAVCaptureDevicePosition) {
+            case AVCaptureDevicePositionFront:
+                self.videoCamera.defaultAVCaptureDevicePosition =
+                AVCaptureDevicePositionBack;
+                [self refresh];
+                break;
+            default:
+                [self.videoCamera stop];
+                [self refresh];
+                break;
+        }
+    }
+    
+    else {
+        // Hide the still image.
+        self.imageView.image = nil;
+        
+        self.videoCamera.defaultAVCaptureDevicePosition =
+        AVCaptureDevicePositionFront;
+        [self.videoCamera start];
+    }
 }
 
 // When user selects a point on the image
