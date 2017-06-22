@@ -35,11 +35,11 @@
 @property VideoCamera *videoCamera;
 @property BOOL saveNextFrame;
 
-//- (IBAction)onTapToSetPointOfInterest:
-//(UITapGestureRecognizer *)tapGesture;
+- (IBAction)onTapToSetPointOfInterest:
+(UITapGestureRecognizer *)tapGesture;
 //- (IBAction)onColorModeSelected:
 //(UISegmentedControl *)segmentedControl;
-//- (IBAction)onSwitchCameraButtonPressed;
+- (IBAction)onSwitchCameraButtonPressed;
 - (IBAction)onSaveButtonPressed;
 
 //- (void)refresh;
@@ -74,6 +74,14 @@
 // TODO
 -(IBAction)onSaveButtonPressed {
     NSLog(@"Save button pressed");
+}
+
+-(IBAction)onSwitchCameraButtonPressed {
+    NSLog(@"Switch camera button pressed");
+}
+
+-(IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture{
+    NSLog(@"POI tapped");
 }
 
 //- (void)viewDidLayoutSubviews {

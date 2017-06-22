@@ -42,7 +42,11 @@
                                             </segments>
                                         </segmentedControl>
                                     </barButtonItem>
-                                    <barButtonItem systemItem="camera" id="kkh-m8-KdI"/>
+                                    <barButtonItem systemItem="camera" id="kkh-m8-KdI">
+                                        <connections>
+                                            <action selector="onSwitchCameraButtonPressed" destination="BYZ-38-t0r" id="BKH-UP-a1U"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="HpX-JQ-dMl"/>
                                     <barButtonItem title="Save" id="udW-ke-U2H">
                                         <connections>
@@ -76,7 +80,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="Low-36-gLI"/>
+                <tapGestureRecognizer id="Low-36-gLI">
+                    <connections>
+                        <action selector="onTapToSetPointOfInterest:" destination="BYZ-38-t0r" id="mfd-4B-raj"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="129.98500749625188"/>
         </scene>
