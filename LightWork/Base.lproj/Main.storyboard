@@ -42,9 +42,9 @@
                                             </segments>
                                         </segmentedControl>
                                     </barButtonItem>
-                                    <barButtonItem title="Item" id="kkh-m8-KdI"/>
+                                    <barButtonItem systemItem="camera" id="kkh-m8-KdI"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="HpX-JQ-dMl"/>
-                                    <barButtonItem title="Item" id="udW-ke-U2H"/>
+                                    <barButtonItem title="Save" id="udW-ke-U2H"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Dn3-pG-GkA"/>
                                 </items>
                             </toolbar>
@@ -65,6 +65,11 @@
                             <constraint firstItem="X7o-Ld-3xA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="kib-wb-WQi"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="activityIndicatorView" destination="3C5-oA-iIl" id="KWU-RS-GWY"/>
+                        <outlet property="imageView" destination="X7o-Ld-3xA" id="Jlh-Gy-IIw"/>
+                        <outlet property="toolbar" destination="SoP-9f-yXi" id="cSP-h7-P3p"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="z6A-D7-ftj"/>
