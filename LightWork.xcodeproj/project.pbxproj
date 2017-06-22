@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D59EE8451EFB82BA0002BB5B /* Fleur.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D59EE8441EFB82BA0002BB5B /* Fleur.jpg */; };
 		D5E76E671EF8E6D700CB9A0E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E76E661EF8E6D700CB9A0E /* main.m */; };
 		D5E76E6A1EF8E6D700CB9A0E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E76E691EF8E6D700CB9A0E /* AppDelegate.m */; };
 		D5E76E6D1EF8E6D700CB9A0E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E76E6C1EF8E6D700CB9A0E /* ViewController.m */; };
@@ -25,9 +26,11 @@
 		D5E76E901EF8E7CD00CB9A0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5E76E8F1EF8E7CD00CB9A0E /* QuartzCore.framework */; };
 		D5E76E921EF8E7D400CB9A0E /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5E76E911EF8E7D400CB9A0E /* Social.framework */; };
 		D5E76E941EF8E7DC00CB9A0E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5E76E931EF8E7DC00CB9A0E /* UIKit.framework */; };
+		D5E76E9A1EF8FB4600CB9A0E /* VideoCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E76E991EF8FB4600CB9A0E /* VideoCamera.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D59EE8441EFB82BA0002BB5B /* Fleur.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Fleur.jpg; sourceTree = "<group>"; };
 		D5E76E621EF8E6D700CB9A0E /* LightWork.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightWork.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5E76E661EF8E6D700CB9A0E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D5E76E681EF8E6D700CB9A0E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -50,6 +53,8 @@
 		D5E76E8F1EF8E7CD00CB9A0E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D5E76E911EF8E7D400CB9A0E /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		D5E76E931EF8E7DC00CB9A0E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D5E76E951EF8FA8200CB9A0E /* VideoCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoCamera.h; sourceTree = "<group>"; };
+		D5E76E991EF8FB4600CB9A0E /* VideoCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoCamera.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +100,7 @@
 		D5E76E641EF8E6D700CB9A0E /* LightWork */ = {
 			isa = PBXGroup;
 			children = (
+				D59EE8441EFB82BA0002BB5B /* Fleur.jpg */,
 				D5E76E7C1EF8E76F00CB9A0E /* opencv2.framework */,
 				D5E76E681EF8E6D700CB9A0E /* AppDelegate.h */,
 				D5E76E691EF8E6D700CB9A0E /* AppDelegate.m */,
@@ -105,6 +111,8 @@
 				D5E76E731EF8E6D700CB9A0E /* LaunchScreen.storyboard */,
 				D5E76E761EF8E6D700CB9A0E /* Info.plist */,
 				D5E76E651EF8E6D700CB9A0E /* Supporting Files */,
+				D5E76E951EF8FA8200CB9A0E /* VideoCamera.h */,
+				D5E76E991EF8FB4600CB9A0E /* VideoCamera.m */,
 			);
 			path = LightWork;
 			sourceTree = "<group>";
@@ -196,6 +204,7 @@
 			files = (
 				D5E76E751EF8E6D700CB9A0E /* LaunchScreen.storyboard in Resources */,
 				D5E76E721EF8E6D700CB9A0E /* Assets.xcassets in Resources */,
+				D59EE8451EFB82BA0002BB5B /* Fleur.jpg in Resources */,
 				D5E76E701EF8E6D700CB9A0E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +216,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5E76E9A1EF8FB4600CB9A0E /* VideoCamera.m in Sources */,
 				D5E76E6D1EF8E6D700CB9A0E /* ViewController.m in Sources */,
 				D5E76E6A1EF8E6D700CB9A0E /* AppDelegate.m in Sources */,
 				D5E76E671EF8E6D700CB9A0E /* main.m in Sources */,
@@ -334,6 +344,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/LightWork",
 				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				INFOPLIST_FILE = LightWork/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mustardLabs.LightWork;
@@ -350,6 +361,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/LightWork",
 				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				INFOPLIST_FILE = LightWork/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mustardLabs.LightWork;
@@ -376,6 +388,7 @@
 				D5E76E7B1EF8E6D700CB9A0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
