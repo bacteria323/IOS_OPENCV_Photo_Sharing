@@ -40,6 +40,9 @@
                                                 <segment title="Color"/>
                                                 <segment title="Gray"/>
                                             </segments>
+                                            <connections>
+                                                <action selector="onColorModeSelected:" destination="BYZ-38-t0r" eventType="valueChanged" id="ZgV-w7-DKx"/>
+                                            </connections>
                                         </segmentedControl>
                                     </barButtonItem>
                                     <barButtonItem systemItem="camera" id="kkh-m8-KdI">

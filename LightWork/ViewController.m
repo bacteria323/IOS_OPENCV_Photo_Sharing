@@ -35,10 +35,9 @@
 @property VideoCamera *videoCamera;
 @property BOOL saveNextFrame;
 
-- (IBAction)onTapToSetPointOfInterest:
-(UITapGestureRecognizer *)tapGesture;
-//- (IBAction)onColorModeSelected:
-//(UISegmentedControl *)segmentedControl;
+- (IBAction)onTapToSetPointOfInterest: (UITapGestureRecognizer *)tapGesture;
+- (IBAction)onColorModeSelected:
+(UISegmentedControl *)segmentedControl;
 - (IBAction)onSwitchCameraButtonPressed;
 - (IBAction)onSaveButtonPressed;
 
@@ -72,6 +71,11 @@
 }
 
 // TODO
+- (IBAction)onColorModeSelected: (UISegmentedControl *)segmentedControl {
+    NSLog(@"Color/gray selected");
+}
+
+
 -(IBAction)onSaveButtonPressed {
     NSLog(@"Save button pressed");
 }
