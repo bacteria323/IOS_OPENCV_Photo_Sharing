@@ -76,7 +76,15 @@
 
 
 - (IBAction)onColorModeSelected: (UISegmentedControl *)segmentedControl {
-    NSLog(@"Color/gray selected");
+    switch (segmentedControl.selectedSegmentIndex) {
+        case 0:
+            self.videoCamera.grayscaleMode = NO;
+            break;
+        default:
+            self.videoCamera.grayscaleMode = YES;
+            break;
+    }
+    [self refresh];
 }
 
 
@@ -88,7 +96,7 @@
     NSLog(@"Switch camera button pressed");
 }
 
-// When user selects a point on the image 
+// When user selects a point on the image
 -(IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture
 {
     if (tapGesture.state == UIGestureRecognizerStateEnded)
