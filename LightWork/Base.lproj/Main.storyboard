@@ -26,7 +26,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <gestureRecognizers/>
                                 <connections>
-                                    <outletCollection property="gestureRecognizers" destination="afF-1Q-9DH" appends="YES" id="3GK-cw-BaF"/>
+                                    <outletCollection property="gestureRecognizers" destination="z6A-D7-ftj" appends="YES" id="ODd-PR-wWg"/>
                                 </connections>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SoP-9f-yXi">
@@ -34,7 +34,7 @@
                                 <items>
                                     <barButtonItem style="plain" id="gcV-Kw-0wV">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Mzw-wU-kvj">
-                                            <rect key="frame" x="16" y="7.5" width="121" height="29"/>
+                                            <rect key="frame" x="16" y="8" width="121" height="29"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="First"/>
@@ -48,21 +48,26 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Dn3-pG-GkA"/>
                                 </items>
                             </toolbar>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3C5-oA-iIl">
+                                <rect key="frame" x="177" y="323" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="X7o-Ld-3xA" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="-20" id="9Bz-5l-TuA"/>
+                            <constraint firstItem="3C5-oA-iIl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Bx9-Y4-npu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="X7o-Ld-3xA" secondAttribute="bottom" id="NtA-Tt-bwe"/>
                             <constraint firstItem="SoP-9f-yXi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="Nzs-cg-QZU"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="SoP-9f-yXi" secondAttribute="bottom" id="U8s-lR-y7t"/>
                             <constraint firstAttribute="trailingMargin" secondItem="X7o-Ld-3xA" secondAttribute="trailing" constant="-16" id="XhU-tL-yDB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="SoP-9f-yXi" secondAttribute="trailing" constant="-16" id="fo6-BK-x4X"/>
+                            <constraint firstItem="3C5-oA-iIl" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="hY5-dQ-fMh"/>
                             <constraint firstItem="X7o-Ld-3xA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="kib-wb-WQi"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="afF-1Q-9DH"/>
+                <tapGestureRecognizer id="z6A-D7-ftj"/>
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="129.98500749625188"/>
         </scene>
