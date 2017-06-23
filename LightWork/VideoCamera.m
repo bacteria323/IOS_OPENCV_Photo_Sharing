@@ -1,8 +1,3 @@
-
-
-
-
-
 #import "VideoCamera.h"
 
 @interface VideoCamera ()
@@ -12,8 +7,6 @@
 @end
 
 @implementation VideoCamera
-
-@synthesize customPreviewLayer = _customPreviewLayer;
 
 - (int)imageWidth {
     AVCaptureVideoDataOutput *output =
