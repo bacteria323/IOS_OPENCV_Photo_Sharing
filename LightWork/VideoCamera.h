@@ -6,15 +6,11 @@
 //  Copyright © 2017 mustardLabs. All rights reserved.
 //
 
-//#ifndef VideoCamera_h
-//#define VideoCamera_h
-//
-//
-//#endif /* VideoCamera_h */
-
+// import in angle brackets <> are global imports. | Import in normal parentheses "" import files in the relative path
+// refer to http://blog.teamtreehouse.com/beginners-guide-objective-c-classes-objects for more information 
 #import <opencv2/videoio/cap_ios.h>
 
-@interface VideoCamera : CvVideoCamera
+@interface VideoCamera : CvVideoCamera // colon is for class inheritance, ie VideoCamer inherits CvVideoCamera
 
 @property BOOL letterboxPreview;
 
