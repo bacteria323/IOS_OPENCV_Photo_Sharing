@@ -78,6 +78,7 @@
     }
 }
 
+// method to focus the camera on the point that users tap on the screen
 - (void)setPointOfInterestInParentViewSpace:(CGPoint)parentViewPoint {
     
     if (!self.running) {
@@ -85,23 +86,30 @@
     }
     
     // Find the current capture device.
-    NSArray *captureDevices =
-    [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    
+    NSArray *captureDeviceType = @[AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                                   AVCaptureDeviceTypeBuiltInDualCamera,
+                                   AVCaptureDeviceTypeBuiltInTelephotoCamera];
+    
+    AVCaptureDeviceDiscoverySession *session = [AVCaptureDeviceDiscoverySession
+                                                discoverySessionWithDeviceTypes:captureDeviceType
+                                                mediaType:AVMediaTypeVideo
+                                                position:AVCaptureDevicePositionUnspecified];
+    
+    NSArray *captureDevices = session.devices;
+    
     AVCaptureDevice *captureDevice;
     for (captureDevice in captureDevices) {
-        if (captureDevice.position ==
-            self.defaultAVCaptureDevicePosition) {
+        if (captureDevice.position == self.defaultAVCaptureDevicePosition) {
             break;
         }
     }
     
-    BOOL canSetFocus = [captureDevice
-                        isFocusModeSupported:AVCaptureFocusModeAutoFocus] &&
-    captureDevice.isFocusPointOfInterestSupported;
+    BOOL canSetFocus = [captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]
+                        && captureDevice.isFocusPointOfInterestSupported;
     
-    BOOL canSetExposure = [captureDevice
-                           isExposureModeSupported:AVCaptureExposureModeAutoExpose] &&
-    captureDevice.isExposurePointOfInterestSupported;
+    BOOL canSetExposure = [captureDevice isExposureModeSupported:AVCaptureExposureModeAutoExpose]
+                            && captureDevice.isExposurePointOfInterestSupported;
     
     if (!canSetFocus && !canSetExposure) {
         return;
@@ -112,25 +120,20 @@
     }
     
     // Find the preview's offset relative to the parent view.
-    CGFloat offsetX = 0.5 * (self.parentView.bounds.size.width -
-                             self.customPreviewLayer.bounds.size.width);
-    CGFloat offsetY = 0.5 * (self.parentView.bounds.size.height -
-                             self.customPreviewLayer.bounds.size.height);
+    CGFloat offsetX = 0.5 * (self.parentView.bounds.size.width - self.customPreviewLayer.bounds.size.width);
+    CGFloat offsetY = 0.5 * (self.parentView.bounds.size.height - self.customPreviewLayer.bounds.size.height);
     
     // Find the focus coordinates, proportional to the preview size.
-    CGFloat focusX = (parentViewPoint.x - offsetX) /
-    self.customPreviewLayer.bounds.size.width;
-    CGFloat focusY = (parentViewPoint.y - offsetY) /
-    self.customPreviewLayer.bounds.size.height;
+    CGFloat focusX = (parentViewPoint.x - offsetX) / self.customPreviewLayer.bounds.size.width;
+    CGFloat focusY = (parentViewPoint.y - offsetY) / self.customPreviewLayer.bounds.size.height;
     
-    if (focusX < 0.0 || focusX > 1.0 ||
-        focusY < 0.0 || focusY > 1.0) {
-        // The point is outside the preview.
-        return;
+    if (focusX < 0.0 || focusX > 1.0 || focusY < 0.0 || focusY > 1.0) {
+        return; // The point is outside the preview.
     }
     
     // Adjust the focus coordinates based on the orientation.
     // They should be in the landscape-right coordinate system.
+    // ie home button is on the rhs
     switch (self.defaultAVCaptureVideoOrientation) {
         case AVCaptureVideoOrientationPortraitUpsideDown: {
             CGFloat oldFocusX = focusX;
@@ -155,22 +158,19 @@
         }
     }
     
-    if (self.defaultAVCaptureDevicePosition ==
-        AVCaptureDevicePositionFront) {
+    if (self.defaultAVCaptureDevicePosition == AVCaptureDevicePositionFront) {
         // De-mirror the X coordinate.
         focusX = 1.0 - focusX;
     }
     
     CGPoint focusPoint = CGPointMake(focusX, focusY);
     
-    if (canSetFocus) {
-        // Auto-focus on the selected point.
+    if (canSetFocus) { // Auto-focus on the selected point.
         captureDevice.focusMode = AVCaptureFocusModeAutoFocus;
         captureDevice.focusPointOfInterest = focusPoint;
     }
     
-    if (canSetExposure) {
-        // Auto-expose for the selected point.
+    if (canSetExposure) { // Auto-expose for the selected point.
         captureDevice.exposureMode = AVCaptureExposureModeAutoExpose;
         captureDevice.exposurePointOfInterest = focusPoint;
     }
