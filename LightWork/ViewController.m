@@ -72,7 +72,7 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    switch ([UIDevice currentDevice].orientation) { 
+    switch ([UIDevice currentDevice].orientation) {
         case UIDeviceOrientationPortraitUpsideDown:
             self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
             break;
@@ -91,30 +91,25 @@
 
 # pragma mark 
 # pragma mark Helper methods
+// change from image preview to default image
 -(void)refresh {
     if (self.videoCamera.running) {
-        // Hide the still image.
-        self.imageView.image = nil;
         
-        // Restart the video.
-        [self.videoCamera stop];
+        self.imageView.image = nil; // Hide the still image.
+        
+        [self.videoCamera stop]; // Restart the video.
         [self.videoCamera start];
-    }
-    
-    else {
+    } else {
         // Refresh the still image.
         UIImage *image;
         if (self.videoCamera.grayscaleMode) {
-            cv::cvtColor(originalStillMat, updatedStillMatGray,
-                         cv::COLOR_RGBA2GRAY);
+            cv::cvtColor(originalStillMat, updatedStillMatGray, cv::COLOR_RGBA2GRAY);
             [self processImage:updatedStillMatGray];
             image = MatToUIImage(updatedStillMatGray);
         } else {
-            cv::cvtColor(originalStillMat, updatedStillMatRGBA,
-                         cv::COLOR_RGBA2BGRA);
+            cv::cvtColor(originalStillMat, updatedStillMatRGBA, cv::COLOR_RGBA2BGRA);
             [self processImage:updatedStillMatRGBA];
-            cv::cvtColor(updatedStillMatRGBA, updatedStillMatRGBA,
-                         cv::COLOR_BGRA2RGBA);
+            cv::cvtColor(updatedStillMatRGBA, updatedStillMatRGBA, cv::COLOR_BGRA2RGBA);
             image = MatToUIImage(updatedStillMatRGBA);
         }
         self.imageView.image = image;
@@ -158,6 +153,23 @@
 - (void)processImageHelper:(cv::Mat &)mat {
     // TODO: Implement in Chapter 3.
 }
+
+#pragma mark
+#pragma mark Toolbar methods
+
+// switch between color and grayscale mode
+- (IBAction)onColorModeSelected: (UISegmentedControl *)segmentedControl {
+    switch (segmentedControl.selectedSegmentIndex) {
+        case 0:
+            self.videoCamera.grayscaleMode = NO;
+            break;
+        default:
+            self.videoCamera.grayscaleMode = YES;
+            break;
+    }
+    [self refresh];
+}
+
 
 - (void)saveImage:(UIImage *)image {
     // Try to save the image to a temporary file.
@@ -288,17 +300,7 @@
 
 
 
-- (IBAction)onColorModeSelected: (UISegmentedControl *)segmentedControl {
-    switch (segmentedControl.selectedSegmentIndex) {
-        case 0:
-            self.videoCamera.grayscaleMode = NO;
-            break;
-        default:
-            self.videoCamera.grayscaleMode = YES;
-            break;
-    }
-    [self refresh];
-}
+
 
 
 -(IBAction)onSaveButtonPressed {
