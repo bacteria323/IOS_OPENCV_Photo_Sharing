@@ -35,6 +35,7 @@
     return videoHeight;
 }
 
+// Bug in opencv 3.1 because it uses this method to make assumptions about the camera's resolution. We override it to remove the bugs.
 - (void)updateSize {
     // Do nothing.
 }
