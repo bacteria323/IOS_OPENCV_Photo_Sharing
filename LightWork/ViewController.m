@@ -17,8 +17,6 @@
 #import "ViewController.h"
 #import "VideoCamera.h"
 
-#import "ViewController.h"
-
 @interface ViewController () <CvVideoCameraDelegate> {
     cv::Mat originalStillMat;
     cv::Mat updatedStillMatGray;
@@ -27,11 +25,11 @@
     cv::Mat updatedVideoMatRGBA;
 }
 
-@property IBOutlet UIImageView *imageView;
-@property IBOutlet UIActivityIndicatorView *activityIndicatorView;
-@property IBOutlet UIToolbar *toolbar;
+@property IBOutlet UIImageView *imageView; // imageview to host default image & camera preview
+@property IBOutlet UIActivityIndicatorView *activityIndicatorView; // loading indicator to show when saving images
+@property IBOutlet UIToolbar *toolbar; // toolbar at the bottom to switch between cameras and save images
 
-@property VideoCamera *videoCamera;
+@property VideoCamera *videoCamera; // custom camera implementation
 @property BOOL saveNextFrame;
 
 - (IBAction)onTapToSetPointOfInterest: (UITapGestureRecognizer *)tapGesture;
@@ -56,7 +54,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
     
     UIImage *originalStillImage = [UIImage imageNamed:@"Fleur.jpg"];
     UIImageToMat(originalStillImage, originalStillMat);
