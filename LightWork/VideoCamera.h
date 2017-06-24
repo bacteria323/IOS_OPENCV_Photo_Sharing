@@ -12,7 +12,7 @@
 
 @interface VideoCamera : CvVideoCamera // colon is for class inheritance, ie VideoCamer inherits CvVideoCamera
 
-@property BOOL letterboxPreview;
+@property BOOL letterboxPreview; // letterboxing = maintain aspect ratio and fill in remaining space with black bars 
 
 - (void)setPointOfInterestInParentViewSpace:(CGPoint)point;
 
