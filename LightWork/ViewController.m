@@ -20,7 +20,6 @@
 #import "ViewController.h"
 
 @interface ViewController () <CvVideoCameraDelegate> {
-//@interface ViewController () {
     cv::Mat originalStillMat;
     cv::Mat updatedStillMatGray;
     cv::Mat updatedStillMatRGBA;
