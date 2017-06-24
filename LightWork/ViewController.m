@@ -65,6 +65,8 @@
     self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetHigh;
     self.videoCamera.defaultFPS = 30; // higher rate = smoother but drains battery faster
     self.videoCamera.letterboxPreview = YES;
+    
+    [self.activityIndicatorView setHidden:TRUE];
 }
 
 // runs after viewDidLoad
@@ -202,13 +204,10 @@
     }
 }
 
-
 - (void)saveImage:(UIImage *)image {
     // Try to save the image to a temporary file.
-    NSString *outputPath = [NSString stringWithFormat:@"%@%@",
-                            NSTemporaryDirectory(), @"output.png"];
-    if (![UIImagePNGRepresentation(image) writeToFile:outputPath
-                                           atomically:YES]) {
+    NSString *outputPath = [NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), @"output.png"];
+    if (![UIImagePNGRepresentation(image) writeToFile:outputPath atomically:YES]) {
         
         // Show an alert describing the failure.
         [self showSaveImageFailureAlertWithMessage:@"The image could not be saved to the temporary directory."];
@@ -330,14 +329,26 @@
     
 }
 
+- (void)startBusyMode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView setHidden:FALSE];
+        [self.activityIndicatorView startAnimating];
+        for (UIBarItem *item in self.toolbar.items) {
+            item.enabled = NO;
+        }
+    });
+}
 
-
-
-
-
-
-
-
+- (void)stopBusyMode {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView setHidden:TRUE];
+        for (UIBarItem *item in self.toolbar.items) {
+            item.enabled = YES;
+        }
+    });
+}
 
 // When user selects a point on the image
 -(IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture
@@ -350,28 +361,6 @@
             [self.videoCamera setPointOfInterestInParentViewSpace:tapPoint];
         }
     }
-}
-
-
-
-
-
-- (void)startBusyMode {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView startAnimating];
-        for (UIBarItem *item in self.toolbar.items) {
-            item.enabled = NO;
-        }
-    });
-}
-
-- (void)stopBusyMode {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView stopAnimating];
-        for (UIBarItem *item in self.toolbar.items) {
-            item.enabled = YES;
-        }
-    });
 }
 
 @end
