@@ -52,18 +52,75 @@
 
 @implementation ViewController
 
+#pragma mark
+#pragma mark View Initialization methods
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIImage *originalStillImage = [UIImage imageNamed:@"Fleur.jpg"];
-    UIImageToMat(originalStillImage, originalStillMat);
+    UIImage *originalStillImage = [UIImage imageNamed:@"Fleur.jpg"]; // load default image
+    UIImageToMat(originalStillImage, originalStillMat); // convert image to matrix 
     
     self.videoCamera = [[VideoCamera alloc] initWithParentView:self.imageView];
     self.videoCamera.delegate = self;
     self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetHigh;
-    self.videoCamera.defaultFPS = 30;
+    self.videoCamera.defaultFPS = 30; // higher rate = smoother but drains battery faster
     self.videoCamera.letterboxPreview = YES;
 }
+
+// runs after viewDidLoad
+// will be called after orientation changes
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    switch ([UIDevice currentDevice].orientation) { 
+        case UIDeviceOrientationPortraitUpsideDown:
+            self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationLandscapeRight;
+            break;
+        default:
+            self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortrait;
+            break;
+    }
+    [self refresh];
+}
+
+# pragma mark 
+# pragma mark Helper methods
+-(void)refresh {
+    if (self.videoCamera.running) {
+        // Hide the still image.
+        self.imageView.image = nil;
+        
+        // Restart the video.
+        [self.videoCamera stop];
+        [self.videoCamera start];
+    }
+    
+    else {
+        // Refresh the still image.
+        UIImage *image;
+        if (self.videoCamera.grayscaleMode) {
+            cv::cvtColor(originalStillMat, updatedStillMatGray,
+                         cv::COLOR_RGBA2GRAY);
+            [self processImage:updatedStillMatGray];
+            image = MatToUIImage(updatedStillMatGray);
+        } else {
+            cv::cvtColor(originalStillMat, updatedStillMatRGBA,
+                         cv::COLOR_RGBA2BGRA);
+            [self processImage:updatedStillMatRGBA];
+            cv::cvtColor(updatedStillMatRGBA, updatedStillMatRGBA,
+                         cv::COLOR_BGRA2RGBA);
+            image = MatToUIImage(updatedStillMatRGBA);
+        }
+        self.imageView.image = image;
+    }
+}
+
 
 - (void)processImage:(cv::Mat &)mat {
     if (self.videoCamera.running) {
@@ -291,60 +348,9 @@
     }
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    
-    switch ([UIDevice currentDevice].orientation) {
-        case UIDeviceOrientationPortraitUpsideDown:
-            self.videoCamera.defaultAVCaptureVideoOrientation =
-            AVCaptureVideoOrientationPortraitUpsideDown;
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            self.videoCamera.defaultAVCaptureVideoOrientation =
-            AVCaptureVideoOrientationLandscapeLeft;
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            self.videoCamera.defaultAVCaptureVideoOrientation =
-            AVCaptureVideoOrientationLandscapeRight;
-            break;
-        default:
-            self.videoCamera.defaultAVCaptureVideoOrientation =
-            AVCaptureVideoOrientationPortrait;
-            break;
-    }
-    
-    [self refresh];
-}
 
--(void)refresh {
-    if (self.videoCamera.running) {
-        // Hide the still image.
-        self.imageView.image = nil;
-        
-        // Restart the video.
-        [self.videoCamera stop];
-        [self.videoCamera start];
-    }
-    
-    else {
-        // Refresh the still image.
-        UIImage *image;
-        if (self.videoCamera.grayscaleMode) {
-            cv::cvtColor(originalStillMat, updatedStillMatGray,
-                         cv::COLOR_RGBA2GRAY);
-            [self processImage:updatedStillMatGray];
-            image = MatToUIImage(updatedStillMatGray);
-        } else {
-            cv::cvtColor(originalStillMat, updatedStillMatRGBA,
-                         cv::COLOR_RGBA2BGRA);
-            [self processImage:updatedStillMatRGBA];
-            cv::cvtColor(updatedStillMatRGBA, updatedStillMatRGBA,
-                         cv::COLOR_BGRA2RGBA);
-            image = MatToUIImage(updatedStillMatRGBA);
-        }
-        self.imageView.image = image;
-    }
-}
+
+
 
 - (void)startBusyMode {
     dispatch_async(dispatch_get_main_queue(), ^{
