@@ -43,10 +43,10 @@
 - (void)processImage:(cv::Mat &)mat;
 - (void)processImageHelper:(cv::Mat &)mat;
 - (void)saveImage:(UIImage *)image;
-//- (void)showSaveImageFailureAlertWithMessage:(NSString *)message;
-//- (void)showSaveImageSuccessAlertWithImage:(UIImage *)image;
-//- (UIAlertAction *)shareImageActionWithTitle:(NSString *)title
-//                                 serviceType:(NSString *)serviceType image:(UIImage *)image;
+- (void)showSaveImageFailureAlertWithMessage:(NSString *)message;
+- (void)showSaveImageSuccessAlertWithImage:(UIImage *)image;
+- (UIAlertAction *)shareImageActionWithTitle:(NSString *)title
+                                 serviceType:(NSString *)serviceType image:(UIImage *)image;
 - (void)startBusyMode;
 - (void)stopBusyMode;
 
