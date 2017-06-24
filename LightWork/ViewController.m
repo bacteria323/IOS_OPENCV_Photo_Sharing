@@ -116,9 +116,11 @@
     }
 }
 
-
+// method implementation for CvVideoCameraDelegate. Since we set self as the delegate this method will be called every frame
 - (void)processImage:(cv::Mat &)mat {
+    
     if (self.videoCamera.running) {
+        
         switch (self.videoCamera.defaultAVCaptureVideoOrientation) {
             case AVCaptureVideoOrientationLandscapeLeft:
             case AVCaptureVideoOrientationLandscapeRight:
@@ -168,6 +170,36 @@
             break;
     }
     [self refresh];
+}
+
+// switch between selfie, front camera and default dummy image
+-(IBAction)onSwitchCameraButtonPressed {
+    if (self.videoCamera.running) {
+        switch (self.videoCamera.defaultAVCaptureDevicePosition) {
+            case AVCaptureDevicePositionFront: // from selfie to forward camera
+                self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionBack;
+                [self refresh];
+                break;
+            default: // go back to dummy image
+                [self.videoCamera stop];
+                [self refresh];
+                break;
+        }
+    } else {
+        // Hide the still image.
+        self.imageView.image = nil;
+        self.videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionFront;
+        [self.videoCamera start];
+    }
+}
+
+-(IBAction)onSaveButtonPressed {
+    [self startBusyMode];
+    if (self.videoCamera.running) {
+        self.saveNextFrame = YES;
+    } else {
+        [self saveImage:self.imageView.image]; //save the dummy image to file
+    }
 }
 
 
@@ -303,39 +335,9 @@
 
 
 
--(IBAction)onSaveButtonPressed {
-    [self startBusyMode];
-    if (self.videoCamera.running) {
-        self.saveNextFrame = YES;
-    } else {
-        [self saveImage:self.imageView.image];
-    }
-}
 
--(IBAction)onSwitchCameraButtonPressed {
-    if (self.videoCamera.running) {
-        switch (self.videoCamera.defaultAVCaptureDevicePosition) {
-            case AVCaptureDevicePositionFront:
-                self.videoCamera.defaultAVCaptureDevicePosition =
-                AVCaptureDevicePositionBack;
-                [self refresh];
-                break;
-            default:
-                [self.videoCamera stop];
-                [self refresh];
-                break;
-        }
-    }
-    
-    else {
-        // Hide the still image.
-        self.imageView.image = nil;
-        
-        self.videoCamera.defaultAVCaptureDevicePosition =
-        AVCaptureDevicePositionFront;
-        [self.videoCamera start];
-    }
-}
+
+
 
 // When user selects a point on the image
 -(IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture
