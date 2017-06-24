@@ -2,27 +2,36 @@
 
 @interface VideoCamera ()
 
+// CALayer An object that manages image-based content and allows you to perform animations on that content
 @property (nonatomic, retain) CALayer *customPreviewLayer;
 
 @end
 
 @implementation VideoCamera
 
+@synthesize customPreviewLayer = _customPreviewLayer;
+
+#pragma mark
+#pragma mark Overriding methods
+
+// get device's horizontal resolution
 - (int)imageWidth {
-    AVCaptureVideoDataOutput *output =
-    [self.captureSession.outputs lastObject];
+    
+    // CvVideoCamera inherits from abstract class CvAbstractCamera which has the property: AVCaptureSession *captureSession
+    // AvCaptureSession is an object that manages capture activity and coordinates the flow of data from input devices to capture outputs
+    // so self.captureSession.outputs returns array of instances that subclass AVCaptureOutput
+    // lastObject simply gets the last item in the array
+    AVCaptureVideoDataOutput *output = [self.captureSession.outputs lastObject];
     NSDictionary *videoSettings = [output videoSettings];
-    int videoWidth =
-    [[videoSettings objectForKey:@"Width"] intValue];
+    int videoWidth = [[videoSettings objectForKey:@"Width"] intValue];
     return videoWidth;
 }
 
+// get device's vertical resolution
 - (int)imageHeight {
-    AVCaptureVideoDataOutput *output =
-    [self.captureSession.outputs lastObject];
+    AVCaptureVideoDataOutput *output = [self.captureSession.outputs lastObject];
     NSDictionary *videoSettings = [output videoSettings];
-    int videoHeight =
-    [[videoSettings objectForKey:@"Height"] intValue];
+    int videoHeight = [[videoSettings objectForKey:@"Height"] intValue];
     return videoHeight;
 }
 
@@ -32,6 +41,7 @@
 
 - (void)layoutPreviewLayer {
     if (self.parentView != nil) {
+        
         
         // Center the video preview.
         self.customPreviewLayer.position = CGPointMake(
