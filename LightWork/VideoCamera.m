@@ -2,7 +2,7 @@
 
 @interface VideoCamera ()
 
-// CALayer An object that manages image-based content and allows you to perform animations on that content
+// CALayer - An object that manages image-based content and allows you to perform animations on that content
 @property (nonatomic, retain) CALayer *customPreviewLayer;
 
 @end
@@ -40,41 +40,41 @@
     // Do nothing.
 }
 
+// method to layout the video preview
 - (void)layoutPreviewLayer {
+    
     if (self.parentView != nil) {
-        
         
         // Center the video preview.
         self.customPreviewLayer.position = CGPointMake(
                                                        0.5 * self.parentView.frame.size.width,
                                                        0.5 * self.parentView.frame.size.height);
         
-        // Find the video's aspect ratio.
-        CGFloat videoAspectRatio = self.imageWidth /
-        (CGFloat)self.imageHeight;
+        // Find the device's video aspect ratio.
+        CGFloat videoAspectRatio = self.imageWidth / (CGFloat)self.imageHeight;
         
         // Scale the video preview while maintaining its aspect ratio.
         CGFloat boundsW;
         CGFloat boundsH;
-        if (self.imageHeight > self.imageWidth) {
-            if (self.letterboxPreview) {
+        
+        if (self.imageHeight > self.imageWidth) { // portrait mode 
+            if (self.letterboxPreview) { // height set to device height but width is smaller to maintain aspect ratio
                 boundsH = self.parentView.frame.size.height;
                 boundsW = boundsH * videoAspectRatio;
-            } else {
+            } else { // full screen height and width
                 boundsW = self.parentView.frame.size.width;
                 boundsH = boundsW / videoAspectRatio;
             }
-        } else {
-            if (self.letterboxPreview) {
+        } else { // horizontal mode
+            if (self.letterboxPreview) { // width set to device width but height is reduced with black bars
                 boundsW = self.parentView.frame.size.width;
                 boundsH = boundsW / videoAspectRatio;
-            } else {
+            } else { // normal full screen horizontal mode
                 boundsH = self.parentView.frame.size.height;
                 boundsW = boundsH * videoAspectRatio;
             }
         }
-        self.customPreviewLayer.bounds = CGRectMake(
-                                                    0.0, 0.0, boundsW, boundsH);
+        self.customPreviewLayer.bounds = CGRectMake(0.0, 0.0, boundsW, boundsH);
     }
 }
 
