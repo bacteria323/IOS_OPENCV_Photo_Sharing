@@ -385,6 +385,18 @@ enum BlendMode {
 
 #pragma mark
 #pragma mark Blending images helper methods
+
+- (BlendMode)blendMode {
+    return _blendMode;
+}
+
+- (void)setBlendMode:(BlendMode)blendMode {
+    if (blendMode != _blendMode) {
+        _blendMode = blendMode;
+        self.blendSettingsChanged = YES;
+    }
+}
+
 - (IBAction)onBlendSrcButtonPressed{}
 - (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender{}
 - (UIAlertAction *)blendModeActionWithTitle:(NSString *)title
