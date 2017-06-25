@@ -17,6 +17,14 @@
 #import "ViewController.h"
 #import "VideoCamera.h"
 
+enum BlendMode {
+    None,
+    Average,
+    Multiply,
+    Screen,
+    HUD
+};
+
 @interface ViewController () <CvVideoCameraDelegate> {
     cv::Mat originalStillMat;
     cv::Mat updatedStillMatGray;
