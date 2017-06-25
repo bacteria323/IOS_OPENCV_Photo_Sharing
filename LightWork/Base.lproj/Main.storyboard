@@ -57,6 +57,8 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Dn3-pG-GkA"/>
+                                    <barButtonItem title="Blend Src" id="EzX-ba-XIP"/>
+                                    <barButtonItem title="Blend Mode" id="ETS-X1-bGO"/>
                                 </items>
                             </toolbar>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3C5-oA-iIl">
