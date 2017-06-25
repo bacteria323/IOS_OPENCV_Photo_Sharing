@@ -182,6 +182,77 @@ enum BlendMode {
         // Do nothing.
         return;
     }
+    
+    if (convertedBlendSrcMat.rows != mat.rows ||
+        convertedBlendSrcMat.cols != mat.cols ||
+        convertedBlendSrcMat.type() != mat.type() ||
+        self.blendSettingsChanged) {
+        
+        // Resize the blending source and convert its format.
+        [self convertBlendSrcMatToWidth:mat.cols height:mat.rows];
+        
+        // Apply any mode-dependent operations to the blending source.
+        switch (self.blendMode) {
+            case Screen:
+                /* Pseudocode:
+                 convertedBlendSrcMat = 255 – convertedBlendSrcMat;
+                 */
+                cv::subtract(255.0, convertedBlendSrcMat,
+                             convertedBlendSrcMat);
+                break;
+            case HUD:
+                /* Pseudocode:
+                 convertedBlendSrcMat =
+                 255 – Laplacian(GaussianBlur(convertedBlendSrcMat));
+                 */
+                cv::GaussianBlur(convertedBlendSrcMat,
+                                 convertedBlendSrcMat, cv::Size(5, 5), 0.0);
+                cv::Laplacian(convertedBlendSrcMat, convertedBlendSrcMat,
+                              -1, 3);
+                if (!self.videoCamera.grayscaleMode) {
+                    // The background is in color.
+                    // Give the foreground a yellowish green tint, which
+                    // will stand out against most backgrounds.
+                    cv::multiply(cv::Scalar(0.0, 1.0, 0.5),
+                                 convertedBlendSrcMat, convertedBlendSrcMat);
+                }
+                cv::subtract(255.0, convertedBlendSrcMat,
+                             convertedBlendSrcMat);
+                break;
+            default:
+                break;
+        }
+        
+        self.blendSettingsChanged = NO;
+    }
+    
+    // Combine the blending source and the current frame.
+    switch (self.blendMode) {
+        case Average:
+            /* Pseudocode:
+             mat = 0.5 * mat + 0.5 * convertedBlendSrcMat;
+             */
+            cv::addWeighted(mat, 0.5, convertedBlendSrcMat, 0.5, 0.0,
+                            mat);
+            break;
+        case Multiply:
+            /* Pseudocode:
+             mat = mat * convertedBlendSrcMat / 255;
+             */
+            cv::multiply(mat, convertedBlendSrcMat, mat, 1.0 / 255.0);
+            break;
+        case Screen:
+        case HUD:
+            /* Pseudocode:
+             mat = 255 – (255 – mat) * convertedBlendSrcMat / 255;
+             */
+            cv::subtract(255.0, mat, mat);
+            cv::multiply(mat, convertedBlendSrcMat, mat, 1.0 / 255.0);
+            cv::subtract(255.0, mat, mat);
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark
