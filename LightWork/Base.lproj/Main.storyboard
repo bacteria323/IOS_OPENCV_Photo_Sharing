@@ -57,8 +57,16 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Dn3-pG-GkA"/>
-                                    <barButtonItem title="Blend Src" id="EzX-ba-XIP"/>
-                                    <barButtonItem title="Blend Mode" id="ETS-X1-bGO"/>
+                                    <barButtonItem title="Blend Src" id="EzX-ba-XIP">
+                                        <connections>
+                                            <action selector="onBlendSrcButtonPressed" destination="BYZ-38-t0r" id="y5b-WS-cGm"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Blend Mode" id="ETS-X1-bGO">
+                                        <connections>
+                                            <action selector="onBlendModeButtonPressed:" destination="BYZ-38-t0r" id="Olg-5A-ZQm"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3C5-oA-iIl">

@@ -176,7 +176,12 @@ enum BlendMode {
 }
 
 - (void)processImageHelper:(cv::Mat &)mat {
-    // TODO: Implement in Chapter 3.
+    
+    if (originalBlendSrcMat.empty()) {
+        // No blending source has been selected.
+        // Do nothing.
+        return;
+    }
 }
 
 #pragma mark
