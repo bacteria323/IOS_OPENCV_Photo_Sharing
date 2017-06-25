@@ -25,12 +25,17 @@ enum BlendMode {
     HUD
 };
 
-@interface ViewController () <CvVideoCameraDelegate> {
+@interface ViewController () <CvVideoCameraDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
     cv::Mat originalStillMat;
     cv::Mat updatedStillMatGray;
     cv::Mat updatedStillMatRGBA;
     cv::Mat updatedVideoMatGray;
     cv::Mat updatedVideoMatRGBA;
+    
+    cv::Mat originalBlendSrcMat;
+    cv::Mat convertedBlendSrcMat;
+    
+    BlendMode _blendMode;
 }
 
 @property IBOutlet UIImageView *imageView; // imageview to host default image & camera preview
@@ -40,10 +45,18 @@ enum BlendMode {
 @property VideoCamera *videoCamera; // custom camera implementation
 @property BOOL saveNextFrame;
 
+@property BlendMode blendMode;
+@property BOOL blendSettingsChanged;
+
 - (IBAction)onTapToSetPointOfInterest: (UITapGestureRecognizer *)tapGesture;
 - (IBAction)onColorModeSelected:(UISegmentedControl *)segmentedControl;
 - (IBAction)onSwitchCameraButtonPressed;
 - (IBAction)onSaveButtonPressed;
+- (IBAction)onBlendSrcButtonPressed;
+- (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender;
+- (UIAlertAction *)blendModeActionWithTitle:(NSString *)title
+                                  blendMode:(BlendMode)blendMode;
+- (void)convertBlendSrcMatToWidth:(int)dstW height:(int)dstH;
 
 - (void)refresh;
 - (void)processImage:(cv::Mat &)mat;
@@ -369,5 +382,15 @@ enum BlendMode {
         }
     }
 }
+
+#pragma mark
+#pragma mark Blending images helper methods
+- (IBAction)onBlendSrcButtonPressed{}
+- (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender{}
+- (UIAlertAction *)blendModeActionWithTitle:(NSString *)title
+                                  blendMode:(BlendMode)blendMode{
+    return nil;
+}
+- (void)convertBlendSrcMatToWidth:(int)dstW height:(int)dstH{}
 
 @end
