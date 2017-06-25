@@ -217,8 +217,7 @@
     
     // Try to add the image to the Photos library.
     NSURL *outputURL = [NSURL URLWithString:outputPath];
-    PHPhotoLibrary *photoLibrary =
-    [PHPhotoLibrary sharedPhotoLibrary];
+    PHPhotoLibrary *photoLibrary = [PHPhotoLibrary sharedPhotoLibrary];
     [photoLibrary performChanges:^{
         [PHAssetChangeRequest
          creationRequestForAssetFromImageAtFileURL:outputURL];
