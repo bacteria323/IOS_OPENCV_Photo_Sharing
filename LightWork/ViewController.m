@@ -288,12 +288,8 @@ enum BlendMode {
     
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    
-    // Pick from the Photos album.
-    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    
-    // Pick from still images, not movies.
-    picker.mediaTypes = [NSArray arrayWithObject:@"public.image"];
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum; // Pick from the Photos album.
+    picker.mediaTypes = [NSArray arrayWithObject:@"public.image"]; // Pick from still images, not movies.
     
     [self presentViewController:picker animated:YES completion:nil];
 }
