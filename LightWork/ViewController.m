@@ -294,6 +294,7 @@ enum BlendMode {
     [self presentViewController:picker animated:YES completion:nil];
 }
 
+// callback method when user finishes selecting photo from the gallery
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
     [picker dismissViewControllerAnimated:YES completion:nil];
     
@@ -309,9 +310,7 @@ enum BlendMode {
     self.blendSettingsChanged = YES;
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
+
 
 #pragma mark Blend mode
 - (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender {
