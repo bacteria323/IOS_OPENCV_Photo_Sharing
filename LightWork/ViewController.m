@@ -89,6 +89,8 @@ enum BlendMode {
     self.videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetHigh;
     self.videoCamera.defaultFPS = 30;
     self.videoCamera.letterboxPreview = YES;
+    
+    [self.activityIndicatorView setHidden:TRUE];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -386,6 +388,7 @@ enum BlendMode {
 
 - (void)startBusyMode {
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView setHidden:FALSE];
         [self.activityIndicatorView startAnimating];
         for (UIBarItem *item in self.toolbar.items) {
             item.enabled = NO;
@@ -396,6 +399,7 @@ enum BlendMode {
 - (void)stopBusyMode {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView setHidden:TRUE];
         for (UIBarItem *item in self.toolbar.items) {
             item.enabled = YES;
         }
