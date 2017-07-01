@@ -116,15 +116,9 @@ enum BlendMode {
     [self refresh];
 }
 
-- (IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture {
-    if (tapGesture.state == UIGestureRecognizerStateEnded) {
-        if (self.videoCamera.running) {
-            CGPoint tapPoint = [tapGesture locationInView:self.imageView];
-            [self.videoCamera setPointOfInterestInParentViewSpace:tapPoint];
-        }
-    }
-}
+#pragma mark - toolbar methods
 
+#pragma mark Change color mode
 - (IBAction)onColorModeSelected:(UISegmentedControl *)segmentedControl {
     switch (segmentedControl.selectedSegmentIndex) {
         case 0:
@@ -137,6 +131,7 @@ enum BlendMode {
     [self refresh];
 }
 
+#pragma mark Switch camera
 - (IBAction)onSwitchCameraButtonPressed {
     
     if (self.videoCamera.running) {
@@ -161,6 +156,7 @@ enum BlendMode {
     }
 }
 
+#pragma mark Save image
 - (IBAction)onSaveButtonPressed {
     [self startBusyMode];
     if (self.videoCamera.running) {
@@ -170,6 +166,228 @@ enum BlendMode {
     }
 }
 
+- (void)saveImage:(UIImage *)image {
+    
+    // Try to save the image to a temporary file.
+    NSString *outputPath = [NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), @"output.png"];
+    if (![UIImagePNGRepresentation(image) writeToFile:outputPath atomically:YES]) {
+        
+        // Show an alert describing the failure.
+        [self showSaveImageFailureAlertWithMessage:@"The image could not be saved to the temporary directory."];
+        
+        return;
+    }
+    
+    // Try to add the image to the Photos library.
+    NSURL *outputURL = [NSURL URLWithString:outputPath];
+    PHPhotoLibrary *photoLibrary = [PHPhotoLibrary sharedPhotoLibrary];
+    [photoLibrary performChanges:^{
+        [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:outputURL];
+    } completionHandler:^(BOOL success, NSError *error) {
+        if (success) {
+            // Show an alert describing the success, with sharing options.
+            [self showSaveImageSuccessAlertWithImage:image];
+        } else {
+            // Show an alert describing the failure.
+            [self showSaveImageFailureAlertWithMessage:error.localizedDescription];
+        }
+    }];
+}
+
+- (void)showSaveImageFailureAlertWithMessage:(NSString *)message {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed to save image" message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self stopBusyMode];
+    }];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)showSaveImageSuccessAlertWithImage:(UIImage *)image {
+    
+    // Create a "Saved image" alert.
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Saved image" message:@"The image has been added to your Photos library. Would you like to share it with your friends?" preferredStyle:UIAlertControllerStyleAlert];
+    
+    // If the user has a Facebook account on this device, add a "Post on Facebook" button to the alert.
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+        UIAlertAction *facebookAction = [self shareImageActionWithTitle:@"Post on Facebook" serviceType:SLServiceTypeFacebook image:image];
+        [alert addAction:facebookAction];
+    }
+    
+    // If the user has a Twitter account on this device, add a "Tweet" button to the alert.
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+        UIAlertAction *twitterAction = [self shareImageActionWithTitle:@"Tweet" serviceType:SLServiceTypeTwitter image:image];
+        [alert addAction:twitterAction];
+    }
+    
+    // If the user has a Sina Weibo account on this device, add a "Post on Sina Weibo" button to the alert.
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeSinaWeibo]) {
+        UIAlertAction *sinaWeiboAction = [self shareImageActionWithTitle:@"Post on Sina Weibo" serviceType:SLServiceTypeSinaWeibo image:image];
+        [alert addAction:sinaWeiboAction];
+    }
+    
+    // If the user has a Tencent Weibo account on this device, add a "Post on Tencent Weibo" button to the alert.
+    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTencentWeibo]) {
+        UIAlertAction *tencentWeiboAction = [self shareImageActionWithTitle:@"Post on Tencent Weibo" serviceType:SLServiceTypeTencentWeibo image:image];
+        [alert addAction:tencentWeiboAction];
+    }
+    
+    // Add a "Do not share" button to the alert.
+    UIAlertAction *doNotShareAction = [UIAlertAction actionWithTitle:@"Do not share" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self stopBusyMode];
+    }];
+    [alert addAction:doNotShareAction];
+    
+    // Show the alert.
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (UIAlertAction *)shareImageActionWithTitle:(NSString *)title serviceType:(NSString *)serviceType image:(UIImage *)image {
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        SLComposeViewController *composeViewController = [SLComposeViewController composeViewControllerForServiceType:serviceType];
+        [composeViewController addImage:image];
+        [self presentViewController:composeViewController animated:YES completion:^{
+            [self stopBusyMode];
+        }];
+    }];
+    return action;
+}
+
+- (void)startBusyMode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView setHidden:FALSE];
+        [self.activityIndicatorView startAnimating];
+        for (UIBarItem *item in self.toolbar.items) {
+            item.enabled = NO;
+        }
+    });
+}
+
+- (void)stopBusyMode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView setHidden:TRUE];
+        for (UIBarItem *item in self.toolbar.items) {
+            item.enabled = YES;
+        }
+    });
+}
+
+#pragma mark Blend source
+- (IBAction)onBlendSrcButtonPressed {
+    
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
+        // The Photos album is unavailable.
+        // Show an error message.
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Photos album unavailable" message:@"Go to the Settings app and give LightWork permission to access your Photos album." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:okAction];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    // Pick from the Photos album.
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    
+    // Pick from still images, not movies.
+    picker.mediaTypes = [NSArray arrayWithObject:@"public.image"];
+    
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    UIImage *image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+    UIImageToMat(image, originalBlendSrcMat);
+    
+    if (self.blendMode == None) {
+        // Blending is currently deactivated.
+        // Activate "Average" blending so that the user sees some result.
+        self.blendMode = Average;
+    }
+    
+    self.blendSettingsChanged = YES;
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark Blend mode
+- (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    alert.popoverPresentationController.barButtonItem = sender;
+    
+    UIAlertAction *averageAction = [self blendModeActionWithTitle:@"Average" blendMode:Average];
+    [alert addAction:averageAction];
+    
+    UIAlertAction *multiplyAction = [self blendModeActionWithTitle:@"Multiply" blendMode:Multiply];
+    [alert addAction:multiplyAction];
+    
+    UIAlertAction *screenAction = [self blendModeActionWithTitle:@"Screen" blendMode:Screen];
+    [alert addAction:screenAction];
+    
+    UIAlertAction *hudAction = [self blendModeActionWithTitle:@"HUD" blendMode:HUD];
+    [alert addAction:hudAction];
+    
+    UIAlertAction *noneAction = [self blendModeActionWithTitle:@"None" blendMode:None];
+    [alert addAction:noneAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (UIAlertAction *)blendModeActionWithTitle:(NSString *)title blendMode:(BlendMode)blendMode {
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.blendMode = blendMode;
+        if (!self.videoCamera.running) {
+            [self refresh];
+        }
+    }];
+    return action;
+}
+
+- (void)convertBlendSrcMatToWidth:(int)dstW height:(int)dstH {
+    
+    double dstAspectRatio = dstW / (double)dstH;
+    
+    int srcW = originalBlendSrcMat.cols;
+    int srcH = originalBlendSrcMat.rows;
+    double srcAspectRatio = srcW / (double)srcH;
+    cv::Mat subMat;
+    if (srcAspectRatio < dstAspectRatio) {
+        int subMatH = (int)(srcW / dstAspectRatio);
+        int startRow = (srcH - subMatH) / 2;
+        int endRow = startRow + subMatH;
+        subMat = originalBlendSrcMat.rowRange(startRow, endRow);
+    } else {
+        int subMatW = (int)(srcH * dstAspectRatio);
+        int startCol = (srcW - subMatW) / 2;
+        int endCol = startCol + subMatW;
+        subMat = originalBlendSrcMat.colRange(startCol, endCol);
+    }
+    cv::resize(subMat, convertedBlendSrcMat, cv::Size(dstW, dstH), 0.0, 0.0, cv::INTER_LANCZOS4);
+    
+    switch (convertedBlendSrcMat.channels()) {
+        case 1:
+            if (!self.videoCamera.grayscaleMode) {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_GRAY2BGRA);
+            }
+            break;
+        default:
+            if (self.videoCamera.grayscaleMode) {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2GRAY);
+            } else {
+                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2BGRA);
+            }
+            break;
+    }
+}
+
+#pragma mark Toolbar helper methods
 - (void)refresh {
     
     if (self.videoCamera.running) {
@@ -301,222 +519,14 @@ enum BlendMode {
     }
 }
 
-- (void)saveImage:(UIImage *)image {
-    
-    // Try to save the image to a temporary file.
-    NSString *outputPath = [NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), @"output.png"];
-    if (![UIImagePNGRepresentation(image) writeToFile:outputPath atomically:YES]) {
-        
-        // Show an alert describing the failure.
-        [self showSaveImageFailureAlertWithMessage:@"The image could not be saved to the temporary directory."];
-        
-        return;
-    }
-    
-    // Try to add the image to the Photos library.
-    NSURL *outputURL = [NSURL URLWithString:outputPath];
-    PHPhotoLibrary *photoLibrary = [PHPhotoLibrary sharedPhotoLibrary];
-    [photoLibrary performChanges:^{
-        [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:outputURL];
-    } completionHandler:^(BOOL success, NSError *error) {
-        if (success) {
-            // Show an alert describing the success, with sharing options.
-            [self showSaveImageSuccessAlertWithImage:image];
-        } else {
-            // Show an alert describing the failure.
-            [self showSaveImageFailureAlertWithMessage:error.localizedDescription];
+
+#pragma mark - Tap listener
+- (IBAction)onTapToSetPointOfInterest:(UITapGestureRecognizer *)tapGesture {
+    if (tapGesture.state == UIGestureRecognizerStateEnded) {
+        if (self.videoCamera.running) {
+            CGPoint tapPoint = [tapGesture locationInView:self.imageView];
+            [self.videoCamera setPointOfInterestInParentViewSpace:tapPoint];
         }
-    }];
-}
-
-- (void)showSaveImageFailureAlertWithMessage:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed to save image" message:message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self stopBusyMode];
-    }];
-    [alert addAction:okAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)showSaveImageSuccessAlertWithImage:(UIImage *)image {
-    
-    // Create a "Saved image" alert.
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Saved image" message:@"The image has been added to your Photos library. Would you like to share it with your friends?" preferredStyle:UIAlertControllerStyleAlert];
-    
-    // If the user has a Facebook account on this device, add a "Post on Facebook" button to the alert.
-    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
-        UIAlertAction *facebookAction = [self shareImageActionWithTitle:@"Post on Facebook" serviceType:SLServiceTypeFacebook image:image];
-        [alert addAction:facebookAction];
-    }
-    
-    // If the user has a Twitter account on this device, add a "Tweet" button to the alert.
-    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-        UIAlertAction *twitterAction = [self shareImageActionWithTitle:@"Tweet" serviceType:SLServiceTypeTwitter image:image];
-        [alert addAction:twitterAction];
-    }
-    
-    // If the user has a Sina Weibo account on this device, add a "Post on Sina Weibo" button to the alert.
-    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeSinaWeibo]) {
-        UIAlertAction *sinaWeiboAction = [self shareImageActionWithTitle:@"Post on Sina Weibo" serviceType:SLServiceTypeSinaWeibo image:image];
-        [alert addAction:sinaWeiboAction];
-    }
-    
-    // If the user has a Tencent Weibo account on this device, add a "Post on Tencent Weibo" button to the alert.
-    if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTencentWeibo]) {
-        UIAlertAction *tencentWeiboAction = [self shareImageActionWithTitle:@"Post on Tencent Weibo" serviceType:SLServiceTypeTencentWeibo image:image];
-        [alert addAction:tencentWeiboAction];
-    }
-    
-    // Add a "Do not share" button to the alert.
-    UIAlertAction *doNotShareAction = [UIAlertAction actionWithTitle:@"Do not share" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self stopBusyMode];
-    }];
-    [alert addAction:doNotShareAction];
-    
-    // Show the alert.
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (UIAlertAction *)shareImageActionWithTitle:(NSString *)title serviceType:(NSString *)serviceType image:(UIImage *)image {
-    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        SLComposeViewController *composeViewController = [SLComposeViewController composeViewControllerForServiceType:serviceType];
-        [composeViewController addImage:image];
-        [self presentViewController:composeViewController animated:YES completion:^{
-            [self stopBusyMode];
-        }];
-    }];
-    return action;
-}
-
-- (void)startBusyMode {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView setHidden:FALSE];
-        [self.activityIndicatorView startAnimating];
-        for (UIBarItem *item in self.toolbar.items) {
-            item.enabled = NO;
-        }
-    });
-}
-
-- (void)stopBusyMode {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView stopAnimating];
-        [self.activityIndicatorView setHidden:TRUE];
-        for (UIBarItem *item in self.toolbar.items) {
-            item.enabled = YES;
-        }
-    });
-}
-
-- (IBAction)onBlendSrcButtonPressed {
-    
-    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
-        // The Photos album is unavailable.
-        // Show an error message.
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Photos album unavailable" message:@"Go to the Settings app and give LightWork permission to access your Photos album." preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:okAction];
-        [self presentViewController:alert animated:YES completion:nil];
-        return;
-    }
-    
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    
-    // Pick from the Photos album.
-    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    
-    // Pick from still images, not movies.
-    picker.mediaTypes = [NSArray arrayWithObject:@"public.image"];
-    
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    [picker dismissViewControllerAnimated:YES completion:nil];
-    
-    UIImage *image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    UIImageToMat(image, originalBlendSrcMat);
-    
-    if (self.blendMode == None) {
-        // Blending is currently deactivated.
-        // Activate "Average" blending so that the user sees some result.
-        self.blendMode = Average;
-    }
-    
-    self.blendSettingsChanged = YES;
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    alert.popoverPresentationController.barButtonItem = sender;
-    
-    UIAlertAction *averageAction = [self blendModeActionWithTitle:@"Average" blendMode:Average];
-    [alert addAction:averageAction];
-    
-    UIAlertAction *multiplyAction = [self blendModeActionWithTitle:@"Multiply" blendMode:Multiply];
-    [alert addAction:multiplyAction];
-    
-    UIAlertAction *screenAction = [self blendModeActionWithTitle:@"Screen" blendMode:Screen];
-    [alert addAction:screenAction];
-    
-    UIAlertAction *hudAction = [self blendModeActionWithTitle:@"HUD" blendMode:HUD];
-    [alert addAction:hudAction];
-    
-    UIAlertAction *noneAction = [self blendModeActionWithTitle:@"None" blendMode:None];
-    [alert addAction:noneAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (UIAlertAction *)blendModeActionWithTitle:(NSString *)title blendMode:(BlendMode)blendMode {
-    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        self.blendMode = blendMode;
-        if (!self.videoCamera.running) {
-            [self refresh];
-        }
-    }];
-    return action;
-}
-
-- (void)convertBlendSrcMatToWidth:(int)dstW height:(int)dstH {
-    
-    double dstAspectRatio = dstW / (double)dstH;
-    
-    int srcW = originalBlendSrcMat.cols;
-    int srcH = originalBlendSrcMat.rows;
-    double srcAspectRatio = srcW / (double)srcH;
-    cv::Mat subMat;
-    if (srcAspectRatio < dstAspectRatio) {
-        int subMatH = (int)(srcW / dstAspectRatio);
-        int startRow = (srcH - subMatH) / 2;
-        int endRow = startRow + subMatH;
-        subMat = originalBlendSrcMat.rowRange(startRow, endRow);
-    } else {
-        int subMatW = (int)(srcH * dstAspectRatio);
-        int startCol = (srcW - subMatW) / 2;
-        int endCol = startCol + subMatW;
-        subMat = originalBlendSrcMat.colRange(startCol, endCol);
-    }
-    cv::resize(subMat, convertedBlendSrcMat, cv::Size(dstW, dstH), 0.0, 0.0, cv::INTER_LANCZOS4);
-    
-    switch (convertedBlendSrcMat.channels()) {
-        case 1:
-            if (!self.videoCamera.grayscaleMode) {
-                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_GRAY2BGRA);
-            }
-            break;
-        default:
-            if (self.videoCamera.grayscaleMode) {
-                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2GRAY);
-            } else {
-                cv::cvtColor(convertedBlendSrcMat, convertedBlendSrcMat, cv::COLOR_RGBA2BGRA);
-            }
-            break;
     }
 }
 
