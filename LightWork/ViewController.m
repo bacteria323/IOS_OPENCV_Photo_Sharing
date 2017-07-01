@@ -78,10 +78,12 @@ enum BlendMode {
     }
 }
 
+#pragma mark - View initialization
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIImage *originalStillImage = [UIImage imageNamed:@"Fleur.jpg"];
+    UIImage *originalStillImage = [UIImage imageNamed:@"Fleur.jpg"]; // set default dummy image to show to users
     UIImageToMat(originalStillImage, originalStillMat);
     
     self.videoCamera = [[VideoCamera alloc] initWithParentView:self.imageView];
