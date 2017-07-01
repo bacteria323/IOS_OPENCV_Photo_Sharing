@@ -95,6 +95,7 @@ enum BlendMode {
     [self.activityIndicatorView setHidden:TRUE];
 }
 
+// will be called everytime view layout changes e.g. switching to gallery and back 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
@@ -112,7 +113,7 @@ enum BlendMode {
             self.videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortrait;
             break;
     }
-    
+
     [self refresh];
 }
 
@@ -309,8 +310,6 @@ enum BlendMode {
     
     self.blendSettingsChanged = YES;
 }
-
-
 
 #pragma mark Blend mode
 - (IBAction)onBlendModeButtonPressed:(UIBarButtonItem *)sender {
